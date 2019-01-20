@@ -24,7 +24,7 @@ AsinCheckerExt.initialize = function () {
 
 		if (googleSheetsID == undefined || googleSheetsID == null || googleSheetsID == '') {
 			console.log('No Google Sheets ID set.');
-			displayNotice('No Google Sheets ID set.', true);
+			displayNotice('No Google Sheets ID set.');
 			return true;
 		}
 

@@ -66,30 +66,29 @@ function initClient() {
 	}).then(function () {
 		console.log('Checking if user has already signed in to Google.');
 		var isSignedIn = gapi.auth2.getAuthInstance().isSignedIn.get();
-		if (isSignedIn) {
-			setTimeout(function () {
-				var hideNotice = true;
-
-				storefrontChecker.task = setInterval(function () {
-					storefrontChecker.init();
-				}, 2000);
-			}, 500);
-
-			if (currentASIN != undefined && currentASIN != null && currentASIN != '') {
-				displayNotice('Scanning ASIN=' + currentASIN + ' on your Spreadsheet ...');
-				checkAsin(currentASIN, function (notice) {
-					displayNotice(notice);
-				}, true);
-
-				if (enableProductSheetScan) {
-					insertColumnNextToASIN(productSheetID, productSheetNum, productSheetASINCol);
-				}
-			}
-		} else {
+		if (!isSignedIn) {
 			console.log('You are not signed-in on Google.');
 			displayNotice('Unable to access Google Spreadsheets.', true);
 			if (confirm('Would you like to authorize AsinCheckerExtension to access Google Sheets?')) {
 				gapi.auth2.getAuthInstance().signIn();
+			}
+		}
+		setTimeout(function () {
+			var hideNotice = true;
+
+			storefrontChecker.task = setInterval(function () {
+				storefrontChecker.init();
+			}, 2000);
+		}, 500);
+
+		if (currentASIN != undefined && currentASIN != null && currentASIN != '') {
+			displayNotice('Scanning ASIN=' + currentASIN + ' on your Spreadsheet ...');
+			checkAsin(currentASIN, function (notice) {
+				displayNotice(notice);
+			}, true);
+
+			if (enableProductSheetScan) {
+				insertColumnNextToASIN(productSheetID, productSheetNum, productSheetASINCol);
 			}
 		}
 	});
@@ -227,44 +226,47 @@ function scanProductSpreadsheet() {
 		range: productSheetName + "!" + ASINColumn + startRow + ":" + ASINColumn
 	}).then(function (response) {
 		var range = response.result;
-		if (range.values.length > 0) {
-			var data = [];
+		if (range.values.length <= 0) {
+			return;
+		}
+		var data = [];
 
-			for (var i = 0; i < range.values.length; i++) {
-				var row = range.values[i];
+		for (var i = 0; i < range.values.length; i++) {
+			var row = range.values[i];
 
-				for (var j = 0; j < row.length; j++) {
-					var celVal = row[j];
-					var asin = getAsin(celVal);
-					if (asin != undefined && asin != '') {
-						checkAsin(asin, function (notice) {
-							if (notice != '') {
-								data.push({
-									range: productSheetName + "!" + resultColumn + (startRow + i),
-									values: [[notice]]
-								});
-							}
-						}, false, true, true, 'Not found in your sheet');
-					}
+			for (var j = 0; j < row.length; j++) {
+				var celVal = row[j];
+				var asin = getAsin(celVal);
+				if (asin != undefined && asin != '') {
+					checkAsin(asin, function (notice) {
+						if (notice != '') {
+							data.push({
+								range: productSheetName + "!" + resultColumn + (startRow + i),
+								values: [[notice]]
+							});
+						}
+					}, false, true, true, 'Not found in your sheet');
 				}
 			}
-
-			if (data.length > 0) {
-				console.log('data=' + data);
-				console.log('Updating product spreadsheet.');
-				var body = {
-					data: data,
-					valueInputOption: 'RAW'
-				};
-				gapi.client.sheets.spreadsheets.values.batchUpdate({
-					spreadsheetId: productSheetID,
-					resource: body
-				}).then((response) => {
-					var result = response.result;
-					console.log(result);
-				});
-			}
 		}
+
+		if (data.length <= 0) {
+			return;
+		}
+		
+		console.log('data=' + data);
+		console.log('Updating product spreadsheet.');
+		var body = {
+			data: data,
+			valueInputOption: 'RAW'
+		};
+		gapi.client.sheets.spreadsheets.values.batchUpdate({
+			spreadsheetId: productSheetID,
+			resource: body
+		}).then((response) => {
+			var result = response.result;
+			console.log(result);
+		});
 	});
 }
 
@@ -280,19 +282,18 @@ function getAsin(celVal) {
 	var asin = '';
 
 	if (celVal.length == 10) {
-		asin = celVal.toUpperCase();
-	} else {
-		celVal = celVal.toUpperCase();
-		if (celVal.indexOf('AMZN.COM') > 0) {
-			asin = celVal.substring(celVal.indexOf('AMZN.COM') + 9, celVal.indexOf('AMZN.COM') + 19);
-		}
+		return celVal.toUpperCase();
+	}
+	celVal = celVal.toUpperCase();
+	if (celVal.indexOf('AMZN.COM') > 0) {
+		asin = celVal.substring(celVal.indexOf('AMZN.COM') + 9, celVal.indexOf('AMZN.COM') + 19);
+	}
 
-		if (celVal.indexOf('AMAZON.COM') > 0 && celVal.indexOf('/DP') > 0) {
-			var regex = RegExp("HTTPS://WWW.AMAZON.COM/([\\w-]+/)?(DP|GP/PRODUCT)/(\\w+/)?(\\w{10})");
-			var match = celVal.match(regex);
-			if (match) {
-				asin = match[4];
-			}
+	if (celVal.indexOf('AMAZON.COM') > 0 && celVal.indexOf('/DP') > 0) {
+		var regex = RegExp("HTTPS://WWW.AMAZON.COM/([\\w-]+/)?(DP|GP/PRODUCT)/(\\w+/)?(\\w{10})");
+		var match = celVal.match(regex);
+		if (match) {
+			asin = match[4];
 		}
 	}
 
