@@ -146,7 +146,6 @@ function checkAsin(searchASIN, callback, reloadDatabase, disableHTML, blankIfNot
 			}
 
 			console.log('Unable to find ASIN=' + searchASIN);
-			console.log(blankIfNotFound)
 			if (blankIfNotFound != undefined && blankIfNotFound == true) {
 				callback(notFoundText);
 				return true;
