@@ -15,17 +15,42 @@ var DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"
 var SCOPES = "https://www.googleapis.com/auth/spreadsheets";
 
 // load after 3 seconds
-setTimeout(function () {
-	handleClientLoad();
-}, 3000);
+keepTrying(1000, 100, handleClientLoad);
+
+/**
+ * Retry function for handling loading of Google API client
+ */
+
+function keepTrying(retryInterval, maxTries, callback) {
+	console.log(maxTries + " retries left");
+	if (maxTries == 0) {
+		console.log("All retries ran out.")
+		return;
+	}
+	if (typeof callback != 'function') {
+		return;
+	}
+
+	if (callback()) {
+		return;
+	} else {
+		setTimeout(function () {
+			keepTrying(retryInterval, maxTries - 1, callback);
+		}, retryInterval);
+	}
+}
 
 /**
  *  On load, called to load the auth2 library and API client library.
  */
 function handleClientLoad() {
-	if (gapi != undefined && gapi.load != undefined) {
+	displayNotice("Waiting Google API client readiness.", true)
+	if (typeof gapi == 'object' &&
+		typeof gapi.load == 'function') {
 		gapi.load('client:auth2', initClient);
+		return true;
 	}
+	return false;
 }
 
 /**
@@ -275,6 +300,9 @@ function getAsin(celVal) {
 }
 
 function displayNotice(message, autoclose) {
+	if (typeof $ === 'undefined') {
+		return;
+	}
 	$('#AsinCheckerExtension-Notice').empty().html(message);
 
 	if (autoclose != undefined) {
