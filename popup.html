@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+	<script type="text/javascript" src="popup-script.js"></script>
+	<style type="text/css">
+		#popup-container {
+			width: 500px;
+		}
+
+		div.box {
+			border: 1px solid #999;
+			border-radius: 5px;
+			padding: 7px;
+		}
+
+		div.box.active {
+			background-color: #d4edda;
+		}
+	</style>
+</head>
+
+<body>
+	<h2>Asin Checker Extension (v1.3)</h2>
+	<div id="popup-container">
+		<div class="box">
+			Enter your ASINs data Spreadsheet ID and sheet name:<br>
+			<input type="text" id="txtGoogleSheetID" placeholder="ASINs Data Spreadsheet ID (required)" value="" style="width:370px; margin-top:7px;">
+			<input type="text" id="txtSheetName" placeholder="Sheet Name (required)" value="" style="width:100px; margin-top:7px;">
+		</div>
+		<p><b>Sheets with ASINs to check:</b></p>
+		<div class="box">
+			<input type="checkbox" id="chkEnableProductSheetScan"> Enable one time spreadsheet scan on next ASIN check?
+			<p>
+				<input type="text" id="txtProductSheetID" placeholder="Spreadsheet ID (required if enabled)" value="" style="width:370px">
+				<input type="text" id="txtProductSheetName" placeholder="Sheet Name (required)" value="" style="width:100px;">
+			</p>
+			Sheet GID Number: <input type="text" id="txtProductSheetNum" value="" placeholder="(number required)" style="width:130px;" />
+			&nbsp;&nbsp;
+			ASIN Column:
+			<select name="txtProductSheetASINCol" id="txtProductSheetASINCol">
+				<option value="1">A</option>
+				<option value="2">B</option>
+				<option value="3">C</option>
+				<option value="4">D</option>
+				<option value="5">E</option>
+				<option value="6">F</option>
+				<option value="7">G</option>
+				<option value="8">H</option>
+				<option value="9">I</option>
+				<option value="10">J</option>
+				<option value="11">K</option>
+				<option value="12">L</option>
+				<option value="13">M</option>
+				<option value="14">N</option>
+				<option value="15">O</option>
+				<option value="16">P</option>
+				<option value="17">Q</option>
+				<option value="18">R</option>
+				<option value="19">S</option>
+				<option value="20">T</option>
+				<option value="21">U</option>
+				<option value="22">V</option>
+				<option value="23">W</option>
+				<option value="24">X</option>
+				<option value="25">Y</option>
+				<option value="26">Z</option>
+			</select>
+			<p style="-webkit-margin-after: 0;">
+				<span style="color: red; font-size: 11px;"><b>WARNING:</b> This operation will insert a new column next to ASIN
+					column on your spreadsheet.
+					Ensure configuration is correct.
+					You may want to create a copy of the spreadsheet for backup purposes in case something unexpected happens.</span>
+			</p>
+		</div>
+		<br>
+		<button id="btnSaveConfiguration" style="float: right;">Save Configuration</button>
+		<div style="clear: both;"></div>
+	</div>
+</body>
+
+</html>

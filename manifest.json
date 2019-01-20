@@ -1,0 +1,45 @@
+{
+   "background": {
+      "persistent": true,
+      "scripts": [
+         "background-script.js"
+      ]
+   },
+   "browser_action": {
+      "default_icon": "icon.png",
+      "default_popup": "popup.html"
+   },
+   "content_scripts": [
+      {
+         "all_frames": true,
+         "js": [
+            "jquery-3.2.1.min.js",
+            "storefront-checker.js",
+            "content-script.js"
+         ],
+         "matches": [
+            "*://*.amazon.com/*"
+         ],
+         "run_at": "document_start"
+      }
+   ],
+   "description": "Notifies user about the ASIN previously found on a linked Google Spreadsheet.",
+   "icons": {
+      "128": "icon.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg0galowBClZsHwDgIWQje2X+N6b/ODIfPasnQWVZj/YNTLQqIOVFfuAccFeHNZmUFqGne+G1qM2pVw7v1JLF66e+lAxmvT6ADtXONf0bkCkOXHnoUJB+zpPhS+34p/Ii16QeFL0kxBovfA8uNZvn2RheiHT61kQzqQZoxv4ix8UZEdl11KXjud1LhU8LkUD2KAh06YjJKFqleIcZHy5UgraPOIPVp8cHlYrJvg6gdZr7ybUBiBhDw5E9vXPYLaUTarUq1yGnS+ZyNtzRbv8x9lfnu4UNpFDLQNrxu0PX2lPjJd+xYsCgRuOLhQUmWnFbHwuyqZHk7UeoUswRZAbTlQIDAQAB",
+   "manifest_version": 2,
+   "name": "ASIN Repeat Checker",
+   "permissions": [
+      "tabs",
+      "*://*.amazon.com/*",
+      "storage"
+   ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.4",
+   "web_accessible_resources": [
+      "jquery-3.2.1.min.js",
+      "inject-script.js",
+      "storefront-checker.js"
+   ]
+}
