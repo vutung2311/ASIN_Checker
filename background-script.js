@@ -27,6 +27,18 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 			break;
 
 		case 'GetInputs':
+			chrome.storage.local.get({
+				'googleSheetID': googleSheetID,
+				'sheetName': sheetName,
+				'enableProductSheetScan': enableProductSheetScan,
+				'productSheetID': productSheetID,
+				'productSheetName': productSheetName,
+				'productSheetNum': productSheetNum,
+				'productSheetASINCol': productSheetASINCol
+			}, function () {
+				console.log('Saved settings to local storage');
+			});
+
 			sendResponse({
 				googleSheetID: googleSheetID,
 				sheetName: sheetName,
@@ -48,7 +60,14 @@ chrome.storage.local.get([
 	'productSheetName',
 	'productSheetNum',
 	'productSheetASINCol'
-], function () {
-	console.log('Settings is saved in local storage');
+], function (result) {
+	googleSheetID = result.googleSheetID;
+	sheetName = result.sheetName;
+	enableProductSheetScan = result.enableProductSheetScan;
+	productSheetID = result.productSheetID;
+	productSheetName = result.productSheetName;
+	productSheetNum = result.productSheetNum;
+	productSheetASINCol = result.productSheetASINCol;
+	console.log('Restored settings from local storage');
 });
 

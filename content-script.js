@@ -81,7 +81,7 @@ AsinCheckerExt.injectContentScripts = function (data) {
 	var script = document.createElement('script');
 	script.id = 'googleapi';
 	script.type = 'text/javascript';
-	script.src = "https://apis.google.com/js/api.js";
+	script.src = "https://apis.google.com/js/client.js";
 	head.appendChild(script);
 
 	var extensionId = chrome.runtime.id;
@@ -96,7 +96,7 @@ AsinCheckerExt.injectContentScripts = function (data) {
 	// Loads the JQuery
 	script = document.createElement('script');
 	script.type = 'text/javascript';
-	script.src = 'chrome-extension://' + extensionId + '/jquery-3.2.1.min.js';
+	script.src = 'chrome-extension://' + extensionId + '/jquery-3.3.1.min.js';
 	head.appendChild(script);
 
 	// Loads inject-script.js

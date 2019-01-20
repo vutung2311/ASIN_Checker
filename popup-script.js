@@ -76,7 +76,7 @@ $(function () {
 			productSheetASINCol: productSheetASINCol
 		}, null, function (response) {
 			if (response == true) {
-				alert('Configuration saved in this session.');
+				alert('Configuration saved.');
 			}
 		});
 	});

@@ -13,7 +13,7 @@
       {
          "all_frames": true,
          "js": [
-            "jquery-3.2.1.min.js",
+            "jquery-3.3.1.min.js",
             "storefront-checker.js",
             "content-script.js"
          ],
@@ -38,7 +38,7 @@
    "update_url": "https://clients2.google.com/service/update2/crx",
    "version": "1.4",
    "web_accessible_resources": [
-      "jquery-3.2.1.min.js",
+      "jquery-3.3.1.min.js",
       "inject-script.js",
       "storefront-checker.js"
    ]
