@@ -81,6 +81,7 @@ AsinCheckerExt.injectContentScripts = function (data) {
 	var script = document.createElement('script');
 	script.id = 'googleapi';
 	script.type = 'text/javascript';
+	script.async = true
 	script.src = "https://apis.google.com/js/client.js";
 	head.appendChild(script);
 
@@ -96,31 +97,24 @@ AsinCheckerExt.injectContentScripts = function (data) {
 	// Loads the JQuery
 	script = document.createElement('script');
 	script.type = 'text/javascript';
+	script.defer = true
 	script.src = 'chrome-extension://' + extensionId + '/jquery-3.3.1.min.js';
 	head.appendChild(script);
 
 	// Loads inject-script.js
 	script = document.createElement('script');
 	script.type = 'text/javascript';
+	script.defer = true
 	script.src = 'chrome-extension://' + extensionId + '/inject-script.js';
 	head.appendChild(script);
 
 	// Loads storefront-checker.js
 	script = document.createElement('script');
 	script.type = 'text/javascript';
+	script.defer = true
 	script.src = 'chrome-extension://' + extensionId + '/storefront-checker.js';
 	head.appendChild(script);
 };
-
-function displayNotice(message, autoclose) {
-	$('#AsinCheckerExtension-Notice').empty().html(message);
-
-	if (autoclose != undefined) {
-		setTimeout(function () {
-			$('#AsinCheckerExtension-Notice').slideUp('fast');
-		}, 10000);
-	}
-}
 
 $(function () {
 	var message = 'Loaded ASIN Checker Extension ...';
@@ -129,3 +123,22 @@ $(function () {
 
 	AsinCheckerExt.initialize();
 });
+
+function displayNotice(message, autoclose) {
+	if (typeof $ === 'undefined') {
+		return
+	}
+	noticeElem = $('#AsinCheckerExtension-Notice');
+	noticeElem.empty().html(message)
+	if (typeof autoclose === 'undefined') {
+		noticeElem.addClass('active')
+		return;
+	}
+
+	noticeElem.removeClass('active')
+	setTimeout(function () {
+		if (!$('#AsinCheckerExtension-Notice').hasClass('active')) {
+			$('#AsinCheckerExtension-Notice').slideUp('fast');
+		}
+	}, 10000);
+}

@@ -44,9 +44,10 @@ function keepTrying(retryInterval, maxTries, callback) {
  *  On load, called to load the auth2 library and API client library.
  */
 function handleClientLoad() {
-	displayNotice("Waiting Google API client readiness.", true)
+	displayNotice("Waiting Google API client readiness.")
 	if (typeof gapi == 'object' &&
 		typeof gapi.load == 'function') {
+		displayNotice("Google API client loaded.", true)
 		gapi.load('client:auth2', initClient);
 		return true;
 	}
@@ -85,7 +86,7 @@ function initClient() {
 			displayNotice('Scanning ASIN=' + currentASIN + ' on your Spreadsheet ...');
 			checkAsin(currentASIN, function (notice) {
 				displayNotice(notice);
-			}, true);
+			}, true, false, true, currentASIN + ' is not found in your sheet');
 
 			if (enableProductSheetScan) {
 				insertColumnNextToASIN(productSheetID, productSheetNum, productSheetASINCol);
@@ -114,22 +115,22 @@ function checkAsin(searchASIN, callback, reloadDatabase, disableHTML, blankIfNot
 
 					if (i == 0) {
 						colHeaders[j] = celVal;
-					} else {
-						var isDate = new Date(celVal).toString() != 'Invalid Date' ? true : false;
-						if (isDate == true) {
-							usedDateArr[j] = celVal;
+						continue;
+					}
+					var isDate = new Date(celVal).toString() != 'Invalid Date' ? true : false;
+					if (isDate == true) {
+						usedDateArr[j] = celVal;
+					}
+
+					asinArr[j] = getAsin(celVal);
+					if (usedDateArr[j] != undefined && asinArr[j] != '' && asinArr[j] == searchASIN) {
+						var notice = asinArr[j] + ' was used on <u>' + usedDateArr[j] + '</u> found on <u> ' + colHeaders[j] + '</u>.';
+						if (disableHTML != undefined && disableHTML == true) {
+							notice = usedDateArr[j] + ' - ' + colHeaders[j];
 						}
 
-						asinArr[j] = getAsin(celVal);
-						if (usedDateArr[j] != undefined && asinArr[j] != '' && asinArr[j] == searchASIN) {
-							var notice = asinArr[j] + ' was used on <u>' + usedDateArr[j] + '</u> found on <u> ' + colHeaders[j] + '</u>.';
-							if (disableHTML != undefined && disableHTML == true) {
-								notice = usedDateArr[j] + ' - ' + colHeaders[j];
-							}
-
-							notices[noticeIndx] = notice;
-							noticeIndx++;
-						}
+						notices[noticeIndx] = notice;
+						noticeIndx++;
 					}
 				}
 			}
@@ -145,6 +146,7 @@ function checkAsin(searchASIN, callback, reloadDatabase, disableHTML, blankIfNot
 			}
 
 			console.log('Unable to find ASIN=' + searchASIN);
+			console.log(blankIfNotFound)
 			if (blankIfNotFound != undefined && blankIfNotFound == true) {
 				callback(notFoundText);
 				return true;
@@ -253,7 +255,7 @@ function scanProductSpreadsheet() {
 		if (data.length <= 0) {
 			return;
 		}
-		
+
 		console.log('data=' + data);
 		console.log('Updating product spreadsheet.');
 		var body = {
@@ -302,17 +304,22 @@ function getAsin(celVal) {
 
 function displayNotice(message, autoclose) {
 	if (typeof $ === 'undefined') {
+		return
+	}
+	noticeElem = $('#AsinCheckerExtension-Notice');
+	noticeElem.empty().html(message)
+	if (typeof autoclose === 'undefined') {
+		noticeElem.addClass('active')
 		return;
 	}
-	$('#AsinCheckerExtension-Notice').empty().html(message);
 
-	if (autoclose != undefined) {
-		setTimeout(function () {
+	noticeElem.removeClass('active')
+	setTimeout(function () {
+		if (!$('#AsinCheckerExtension-Notice').hasClass('active')) {
 			$('#AsinCheckerExtension-Notice').slideUp('fast');
-		}, 10000);
-	}
+		}
+	}, 10000);
 }
-
 /**
  * Takes a positive integer and returns the corresponding column name.
  * @param {number} num  The positive integer to convert to a column name.

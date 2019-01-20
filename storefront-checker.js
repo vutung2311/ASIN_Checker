@@ -44,7 +44,7 @@ var StorefrontChecker = (function () {
 			}
 		});
 
-		if (typeof checkAsin == 'function' && asins.length > 0) {
+		if (typeof checkAsin === 'function' && asins.length > 0) {
 			checkAsin(asins[0], function (notice) {
 				if (notice.indexOf('not found') > -1) {
 					$('div.ACE-loader[data-asin="' + asins[0] + '"]')
