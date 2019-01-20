@@ -23,11 +23,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 			productSheetNum = message.productSheetNum;
 			productSheetASINCol = message.productSheetASINCol;
 
-			sendResponse(true);
-			break;
-
-		case 'GetInputs':
-			chrome.storage.local.get({
+			chrome.storage.local.set({
 				'googleSheetID': googleSheetID,
 				'sheetName': sheetName,
 				'enableProductSheetScan': enableProductSheetScan,
@@ -38,6 +34,11 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 			}, function () {
 				console.log('Saved settings to local storage');
 			});
+
+			sendResponse(true);
+			break;
+
+		case 'GetInputs':
 
 			sendResponse({
 				googleSheetID: googleSheetID,
