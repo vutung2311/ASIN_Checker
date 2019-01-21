@@ -1,12 +1,19 @@
 /**
  * ASIN Checker Extension
  * - Content Script
- * 
+ *
  * @Copyright 2017
  */
 var AsinCheckerExt = {};
 
 AsinCheckerExt.getAsin = function () {
+	var url = $(location).attr("href");
+	var regex = RegExp("https://www.amazon.com/([\\w-]+/)?(dp|gp/product)/(\\w+/)?(\\w{10})");
+	m = url.match(regex);
+	if (m) {
+		return m[4];
+	}
+
 	return $('input#ASIN').val();
 }
 

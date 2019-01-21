@@ -1,7 +1,7 @@
 /**
  * ASIN Checker Extension
  * - Inject Content Script
- * 
+ *
  * @Author	chester@corciega.net
  */
 // Client ID and API key from the Developer Console
@@ -164,7 +164,7 @@ function checkAsin(searchASIN, callback, reloadDatabase, disableHTML, blankIfNot
 	};
 
 	if (reloadDatabase == undefined || reloadDatabase == true) {
-		console.log('Scanning ASINDatabase SheetId=' + googleSheetsID);
+		console.log('Scanning ASIN Database SheetId=' + googleSheetsID);
 		gapi.client.sheets.spreadsheets.values.get({
 			spreadsheetId: googleSheetsID,
 			range: sheetName + "!A1:J"
